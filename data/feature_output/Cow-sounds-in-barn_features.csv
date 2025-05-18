@@ -1,0 +1,2 @@
+segment_id,start_time,end_time,rms_energy,zero_crossing_rate,spectral_centroid,spectral_bandwidth,mfcc_1,mfcc_2,mfcc_3,mfcc_4,mfcc_5,mfcc_6,mfcc_7,mfcc_8,mfcc_9,mfcc_10,mfcc_11,mfcc_12,mfcc_13
+47,3.78,5.6,0.13147528,0.038594808923192774,1874.2047717234461,2606.6609901981956,-185.89455,182.78323,-30.740294,4.067811,-26.773127,29.178146,-17.935099,4.256643,-10.716732,-6.530713,-9.483258,-10.804349,-5.8656716
