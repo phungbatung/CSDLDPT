@@ -1,31 +1,29 @@
-## CSDLDPT
-### 1. 🧩 Cài thư viện cần thiết:
+# Hệ thống tìm kiếm âm thanh động vật
+
+Đây là hệ thống tìm kiếm âm thanh động vật dựa trên việc trích xuất đặc trưng từng đoạn âm thanh và so sánh độ tương đồng bằng độ đo cosine.
+
+## 1. Cài đặt thư viện
+
+Trước tiên, hãy cài đặt các thư viện cần thiết bằng lệnh:
+
 ```bash
-pip install librosa scikit-learn numpy
+pip install librosa scikit-learn numpy matplotlib pandas
 ```
 
----
+## 2. Xây dựng đặc trưng cho các file trong cơ sở dữ liệu
 
-### 2. 🛠️ Xây dựng đặc trưng âm thanh cho toàn bộ file `.mp3` trong thư mục dataset:
+Trích xuất đặc trưng và lưu trữ vào hệ thống bằng lệnh sau:
+
 ```bash
-python search.py --build
+python handler/main.py --build
 ```
 
-Lệnh này sẽ:
-- Duyệt qua tất cả file `.mp3` trong thư mục `data/dataset/`
-- Trích xuất đặc trưng âm thanh (MFCC, Delta, Chroma, ...)
-- Lưu vào file `features.npy` để dùng khi tìm kiếm
+## 3. Chạy hệ thống
 
----
+Sau khi xây dựng xong cơ sở dữ liệu đặc trưng, bạn có thể khởi động hệ thống để thử nghiệm:
 
-### 3. 🔍 Tìm file âm thanh tương đồng:
 ```bash
-python search.py --input path/to/your_input.mp3
+python main.py
 ```
 
-Ví dụ nếu file đầu vào nằm trong thư mục `data/dataset/`:
-```bash
-python search.py --input data/dataset/test_input.mp3
-```
-
-Kết quả sẽ hiển thị tên file `.mp3` trong database có đặc trưng gần giống nhất với file bạn nhập vào.
+Hệ thống sẽ tạo một server Flask đơn giản để nhận âm thanh đầu vào, xử lý và trả về các kết quả âm thanh tương đồng nhất từ cơ sở dữ liệu.
