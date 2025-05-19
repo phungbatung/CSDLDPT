@@ -7,7 +7,7 @@
 Trước tiên, hãy cài đặt các thư viện cần thiết bằng lệnh:
 
 ```bash
-pip install librosa scikit-learn numpy matplotlib pandas
+pip install librosa scikit-learn numpy matplotlib pandas flask
 ```
 
 ## 2. Xây dựng đặc trưng cho các file trong cơ sở dữ liệu
@@ -15,7 +15,7 @@ pip install librosa scikit-learn numpy matplotlib pandas
 Trích xuất đặc trưng và lưu trữ vào hệ thống bằng lệnh sau:
 
 ```bash
-python handler/main.py --build
+python handler.py --build
 ```
 
 ## 3. Chạy hệ thống
