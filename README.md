@@ -15,7 +15,7 @@ pip install librosa scikit-learn numpy matplotlib pandas flask
 Trích xuất đặc trưng và lưu trữ vào hệ thống bằng lệnh sau:
 
 ```bash
-python handler/main.py --build
+python handler.py --build
 ```
 
 ## 3. Chạy hệ thống
