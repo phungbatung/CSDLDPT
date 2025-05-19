@@ -8,14 +8,15 @@ from pymongo import MongoClient
 
 client_url = "mongodb+srv://truongnt:lUH5WK7x5TqjnME0@cluster0.pqgkiks.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0"
 
+
+# CHUẨN HÓA MIN_MAX
 with open("features_range.json", "r") as f:
     min_max_values = json.load(f)
 
-# --- Chuẩn hóa 1 vector feature ---
 def normalize_feature(value, min_val, max_val):
     if max_val == min_val:
-        return 0
-    return 2 * ((value - min_val) / (max_val - min_val)) - 1
+        return 0  # tránh chia 0
+    return 2 * ((value - min_val) / (max_val - min_val)) - 1  # Chuẩn hóa về [-1, 1]
 
 def normalize_features(row):
     normalized = {}
@@ -30,6 +31,29 @@ def normalize_features(row):
             max_val = min_max_values[key]["max"]
             normalized[key] = normalize_feature(value, min_val, max_val)
     return normalized
+# CHUẨN HÓA MIN_MAX
+
+# # CHUẨN HÓA Z_SCORE
+# # --- Đọc giá trị mean/std để chuẩn hóa z-score ---
+# with open("features_stats_zscore.json", "r") as f:
+#     zscore_stats = json.load(f)
+
+# # --- Hàm chuẩn hóa Z-Score ---
+# def normalize_feature_zscore(value, mean, std):
+#     if std == 0:
+#         return 0  # tránh chia cho 0
+#     return (value - mean) / std
+
+# # --- Hàm chuẩn hóa toàn bộ các đặc trưng ---
+# def normalize_features(row):
+#     normalized = {}
+#     for key, value in row.items():
+#         if key in zscore_stats:
+#             mean = zscore_stats[key]["mean"]
+#             std = zscore_stats[key]["std"]
+#             normalized[key] = normalize_feature_zscore(value, mean, std)
+#     return normalized
+# # CHUẨN HÓA Z_SCORE
 
 # --- Tính cosine similarity giữa 2 list vector ---
 def average_cosine_similarity(vectors1, vectors2):

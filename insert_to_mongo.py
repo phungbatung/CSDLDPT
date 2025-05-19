@@ -3,11 +3,11 @@ import json
 import librosa
 import pandas as pd
 from pymongo import MongoClient
-from feature_extractor import extract_audio_features  # Đảm bảo hàm của bạn ở đây hoặc cùng file
+from feature_extractor import extract_audio_features  # Đảm bảo hàm extract_audio_features hoạt động
 
 client_url = "mongodb+srv://truongnt:lUH5WK7x5TqjnME0@cluster0.pqgkiks.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0"
 
-# --- Giá trị Min-Max để chuẩn hóa ---
+# CHUẨN HÓA MIN_MAX
 with open("features_range.json", "r") as f:
     min_max_values = json.load(f)
 
@@ -29,7 +29,31 @@ def normalize_features(row):
             max_val = min_max_values[key]["max"]
             normalized[key] = normalize_feature(value, min_val, max_val)
     return normalized
+# CHUẨN HÓA MIN_MAX
 
+# # CHUẨN HÓA Z_SCORE
+# # --- Đọc giá trị mean/std để chuẩn hóa z-score ---
+# with open("features_stats_zscore.json", "r") as f:
+#     zscore_stats = json.load(f)
+
+# # --- Hàm chuẩn hóa Z-Score ---
+# def normalize_feature_zscore(value, mean, std):
+#     if std == 0:
+#         return 0  # tránh chia cho 0
+#     return (value - mean) / std
+
+# # --- Hàm chuẩn hóa toàn bộ các đặc trưng ---
+# def normalize_features(row):
+#     normalized = {}
+#     for key, value in row.items():
+#         if key in zscore_stats:
+#             mean = zscore_stats[key]["mean"]
+#             std = zscore_stats[key]["std"]
+#             normalized[key] = normalize_feature_zscore(value, mean, std)
+#     return normalized
+# # CHUẨN HÓA Z_SCORE
+
+# --- Hàm xử lý thư mục âm thanh ---
 def process_audio_folder(audio_folder):
     client = MongoClient(client_url)
     db = client["animal_sounds"]
@@ -46,7 +70,7 @@ def process_audio_folder(audio_folder):
                     if features_df.empty:
                         continue
 
-                    # Duyệt qua từng dòng (segment) trong DataFrame
+                    # Duyệt qua từng dòng (segment)
                     for _, row in features_df.iterrows():
                         normalized_feature = normalize_features(row.to_dict())
                         doc = {
@@ -54,12 +78,10 @@ def process_audio_folder(audio_folder):
                             "feature": normalized_feature
                         }
                         collection.insert_one(doc)
-                        print(f"Đã lưu đặc trưng cho segment trong file: {file}")
+                        print(f"✅ Đã lưu đặc trưng cho segment trong file: {file}")
                 except Exception as e:
-                    print(f"Lỗi khi xử lý {file_path}: {e}")
+                    print(f"❌ Lỗi khi xử lý {file_path}: {e}")
 
 if __name__ == "__main__":
     audio_folder = r"data\dataset"
     process_audio_folder(audio_folder)
-
-
