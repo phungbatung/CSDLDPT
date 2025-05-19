@@ -1,13 +1,28 @@
 <!DOCTYPE html>
 <html lang="vi">
-<head>
-    <meta charset="UTF-8">
+  <head>
+    <meta charset="UTF-8" />
     <title>Upload & Tìm kiếm âm thanh</title>
-</head>
-<body>
+    <style>
+      #loading {
+        display: none;
+        font-weight: bold;
+        color: green;
+        margin-top: 10px;
+      }
+    </style>
+  </head>
+  <body>
     <h2>Upload File Âm Thanh & Tìm kiếm</h2>
-    <input type="file" id="fileInput" accept="audio/*" onchange="previewLocalAudio()">
+    <input
+      type="file"
+      id="fileInput"
+      accept="audio/*"
+      onchange="previewLocalAudio()"
+    />
     <button onclick="uploadAndSearch()">Tìm kiếm</button>
+
+    <p id="loading">⏳ Đang xử lý và tìm kiếm... Vui lòng chờ...</p>
 
     <h3>Nghe thử file vừa chọn (local):</h3>
     <div id="localPreview"></div>
@@ -16,60 +31,67 @@
     <ul id="resultList"></ul>
 
     <script>
-        function previewLocalAudio() {
-            const fileInput = document.getElementById('fileInput');
-            const file = fileInput.files[0];
-            const localPreview = document.getElementById('localPreview');
-            localPreview.innerHTML = '';
+      function previewLocalAudio() {
+        const fileInput = document.getElementById("fileInput");
+        const file = fileInput.files[0];
+        const localPreview = document.getElementById("localPreview");
+        localPreview.innerHTML = "";
 
-            if (file) {
-                const audio = document.createElement('audio');
+        if (file) {
+          const audio = document.createElement("audio");
+          audio.controls = true;
+          audio.src = URL.createObjectURL(file);
+          localPreview.appendChild(audio);
+        }
+      }
+
+      function uploadAndSearch() {
+        const fileInput = document.getElementById("fileInput");
+        const file = fileInput.files[0];
+        const loading = document.getElementById("loading");
+        const resultList = document.getElementById("resultList");
+
+        if (!file) {
+          alert("Vui lòng chọn file!");
+          return;
+        }
+
+        // Hiện loading
+        loading.style.display = "block";
+        resultList.innerHTML = "";
+
+        const formData = new FormData();
+        formData.append("file", file);
+
+        fetch("http://127.0.0.1:5000/", {
+          method: "POST",
+          body: formData,
+        })
+          .then((response) => response.json())
+          .then((data) => {
+            loading.style.display = "none"; // Ẩn loading
+
+            // Hiển thị danh sách similar files
+            if (data.similar_files && data.similar_files.length > 0) {
+              data.similar_files.forEach((url) => {
+                const li = document.createElement("li");
+                const audio = document.createElement("audio");
                 audio.controls = true;
-                audio.src = URL.createObjectURL(file);
-                localPreview.appendChild(audio);
+                audio.src = url;
+                li.textContent = url + " ";
+                li.appendChild(audio);
+                resultList.appendChild(li);
+              });
+            } else {
+              resultList.innerHTML = "<li>Không tìm thấy file tương tự.</li>";
             }
-        }
-
-        function uploadAndSearch() {
-            const fileInput = document.getElementById('fileInput');
-            const file = fileInput.files[0];
-            if (!file) {
-                alert('Vui lòng chọn file!');
-                return;
-            }
-
-            const formData = new FormData();
-            formData.append('file', file);
-
-            fetch('http://127.0.0.1:5000/', {
-                method: 'POST',
-                body: formData
-            })
-            .then(response => response.json())
-            .then(data => {
-                const resultList = document.getElementById('resultList');
-                resultList.innerHTML = '';
-
-                // Hiển thị danh sách similar files
-                if (data.similar_files && data.similar_files.length > 0) {
-                    data.similar_files.forEach(url => {
-                        const li = document.createElement('li');
-                        const audio = document.createElement('audio');
-                        audio.controls = true;
-                        audio.src = url;
-                        li.textContent = url + ' ';
-                        li.appendChild(audio);
-                        resultList.appendChild(li);
-                    });
-                } else {
-                    resultList.innerHTML = '<li>Không tìm thấy file tương tự.</li>';
-                }
-            })
-            .catch(err => {
-                console.error('Lỗi:', err);
-                alert('Lỗi khi tìm kiếm file!');
-            });
-        }
+          })
+          .catch((err) => {
+            loading.style.display = "none"; // Ẩn loading nếu lỗi
+            console.error("Lỗi:", err);
+            alert("Lỗi khi tìm kiếm file!");
+          });
+      }
     </script>
-</body>
+  </body>
 </html>

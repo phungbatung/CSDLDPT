@@ -20,10 +20,11 @@ def process_audio():
     file.save(save_path)
     
     similar_files = search_similar_audio(save_path, top_k=3)
+    print(similar_files)
     os.remove(save_path)
     
     # Trả về list URL file có thể nghe trực tiếp
-    file_urls = ["http://127.0.0.1:5000/file/" + f[0].replace('_features.csv', '.mp3') for f in similar_files]
+    file_urls = ["http://127.0.0.1:5000/file/" + f[0] for f in similar_files]
 
 
     return jsonify({
