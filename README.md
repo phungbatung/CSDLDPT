@@ -15,7 +15,7 @@ pip install librosa scikit-learn numpy matplotlib pandas flask
 Trích xuất đặc trưng và lưu trữ vào hệ thống bằng lệnh sau:
 
 ```bash
-python handler.py --build
+python insert_to_mongo.py
 ```
 
 ## 3. Chạy hệ thống
