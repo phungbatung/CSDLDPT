@@ -5,7 +5,7 @@ import pandas as pd
 from pymongo import MongoClient
 from feature_extractor import extract_audio_features  # Đảm bảo hàm extract_audio_features hoạt động
 
-client_url = "mongodb+srv://truongnt:lUH5WK7x5TqjnME0@cluster0.pqgkiks.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0"
+client_url = "mongodb+srv://phungbatung2000na:3t6qlbS1sHDF3e0s@cluster0.pqgkiks.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0"
 
 # CHUẨN HÓA MIN_MAX
 with open("features_range.json", "r") as f:

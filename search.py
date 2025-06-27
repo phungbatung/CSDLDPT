@@ -6,7 +6,7 @@ from sklearn.metrics.pairwise import cosine_similarity
 from feature_extractor import extract_audio_features
 from pymongo import MongoClient
 
-client_url = "mongodb+srv://truongnt:lUH5WK7x5TqjnME0@cluster0.pqgkiks.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0"
+client_url = "mongodb+srv://phungbatung2000na:3t6qlbS1sHDF3e0s@cluster0.pqgkiks.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0"
 
 
 # CHUẨN HÓA MIN_MAX
@@ -31,29 +31,7 @@ def normalize_features(row):
             max_val = min_max_values[key]["max"]
             normalized[key] = normalize_feature(value, min_val, max_val)
     return normalized
-# CHUẨN HÓA MIN_MAX
 
-# # CHUẨN HÓA Z_SCORE
-# # --- Đọc giá trị mean/std để chuẩn hóa z-score ---
-# with open("features_stats_zscore.json", "r") as f:
-#     zscore_stats = json.load(f)
-
-# # --- Hàm chuẩn hóa Z-Score ---
-# def normalize_feature_zscore(value, mean, std):
-#     if std == 0:
-#         return 0  # tránh chia cho 0
-#     return (value - mean) / std
-
-# # --- Hàm chuẩn hóa toàn bộ các đặc trưng ---
-# def normalize_features(row):
-#     normalized = {}
-#     for key, value in row.items():
-#         if key in zscore_stats:
-#             mean = zscore_stats[key]["mean"]
-#             std = zscore_stats[key]["std"]
-#             normalized[key] = normalize_feature_zscore(value, mean, std)
-#     return normalized
-# # CHUẨN HÓA Z_SCORE
 
 # --- Tính cosine similarity giữa 2 list vector ---
 def average_cosine_similarity(vectors1, vectors2):
@@ -63,35 +41,6 @@ def average_cosine_similarity(vectors1, vectors2):
             sim = cosine_similarity([v1], [v2])[0][0]
             sims.append(sim)
     return np.mean(sims)
-
-# def cosine_sim(vec1, vec2):
-#     """Tính cosine similarity giữa 2 vector numpy."""
-#     vec1 = vec1.reshape(1, -1)
-#     vec2 = vec2.reshape(1, -1)
-#     return cosine_similarity(vec1, vec2)[0][0]
-
-# def average_segment_similarity(df1, df2):
-#     """
-#     Tính similarity trung bình theo chiến thuật:
-#     Với mỗi segment của df1, lấy max similarity với tất cả segment của df2,
-#     sau đó trung bình các max similarity này.
-    
-#     df1, df2: pandas DataFrame chứa các segment feature (không tính cột segment_id, start_time, end_time).
-#     """
-#     ignore_cols = ['segment_id', 'start_time', 'end_time']
-#     features1 = df1.drop(columns=ignore_cols).values
-#     features2 = df2.drop(columns=ignore_cols).values
-
-#     max_sims = []
-#     for vec1 in features1:
-#         sims = []
-#         for vec2 in features2:
-#             sim = cosine_sim(vec1, vec2)
-#             sims.append(sim)
-#         if sims:
-#             max_sims.append(max(sims))
-
-#     return np.mean(max_sims) if max_sims else 0
 
 
 def search_similar_audio(file_path, top_k=3):

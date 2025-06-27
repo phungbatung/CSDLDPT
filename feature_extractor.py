@@ -4,22 +4,7 @@ import pandas as pd
 import matplotlib.pyplot as plt
 
 def extract_audio_features(file_path, window_size=0.1, overlap=0.3, k=1, threshold=0.3, rms_threshold=0.055):
-    """
-    Trích xuất đặc trưng âm thanh theo segment dựa trên spectral_centroid.
-    
-    Parameters:
-        file_path (str): Đường dẫn file âm thanh.
-        window_size (float): Kích thước cửa sổ (giây).
-        overlap (float): Phần trăm chồng lấn giữa các cửa sổ (0~1).
-        k (int): So sánh window i với window (i-k).
-        threshold (float): Ngưỡng chênh lệch spectral_centroid để tách đoạn.
-        rms_threshold (float): Ngưỡng năng lượng RMS để lọc segment yếu.
-    
-    Returns:
-        segment_result (list): Danh sách các segment (start_frame, end_frame).
-        features_df (pd.DataFrame): Bảng đặc trưng của các segment.
-    """
-        # Load file âm thanh
+    # Load file âm thanh
     y, sr = librosa.load(file_path, sr=None)
     total_duration = librosa.get_duration(y=y, sr=sr)
 
@@ -31,21 +16,18 @@ def extract_audio_features(file_path, window_size=0.1, overlap=0.3, k=1, thresho
     rms_energy = librosa.feature.rms(y=y, frame_length=window_length, hop_length=hop_length)[0]
     num_windows = len(rms_energy)
 
-    #Test rms_threshold
-    # rms_threshold = np.mean(rms_energy)*0.5
-    # print(f"Ngưỡng RMS: {rms_threshold:.4f}")
     
     # Tách segment dựa trên chênh lệch RMS energy
     segment_result = []
     start_segment = 0
 
     for i in range(k, num_windows):
-        max_val = max(rms_energy[i], rms_energy[i - k])
-        diff = abs(rms_energy[i] - rms_energy[i - k])
-        if max_val != 0:  # Tránh chia 0
-            percent_diff = diff / max_val
-        else:
-            percent_diff = 0
+        # max_val = max(rms_energy[i], rms_energy[i - k])
+        # diff = abs(rms_energy[i] - rms_energy[i - k])
+        # if max_val != 0:  # Tránh chia 0
+        #     percent_diff = diff / max_val
+        # else:
+        #     percent_diff = 0
         # print(f"Window {i}: {rms_energy[i]} vs {rms_energy[i - k]} -> Percent diff: {percent_diff:.4f}")
         # Nếu chênh lệch lớn hơn ngưỡng, đánh dấu segment
         # if percent_diff > threshold and diff > 0.05:  # diff > 0.01 là ngưỡng RMS tuyệt đối
@@ -81,7 +63,6 @@ def extract_audio_features(file_path, window_size=0.1, overlap=0.3, k=1, thresho
         zero_crossing_rate = np.mean(librosa.feature.zero_crossing_rate(y_seg))
         spectral_centroid_seg = np.mean(librosa.feature.spectral_centroid(y=y_seg, sr=sr))
         spectral_bandwidth = np.mean(librosa.feature.spectral_bandwidth(y=y_seg, sr=sr))
-        # spectral_contrast = np.mean(librosa.feature.spectral_contrast(y=y_seg, sr=sr))
         mfcc = np.mean(librosa.feature.mfcc(y=y_seg, sr=sr, n_mfcc=13), axis=1)
 
         feature_row = {
@@ -92,7 +73,6 @@ def extract_audio_features(file_path, window_size=0.1, overlap=0.3, k=1, thresho
             'zero_crossing_rate': zero_crossing_rate,
             'spectral_centroid': spectral_centroid_seg,
             'spectral_bandwidth': spectral_bandwidth
-            # 'spectral_contrast': spectral_contrast
         }
 
         # Thêm MFCCs
